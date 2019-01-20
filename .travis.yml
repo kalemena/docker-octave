@@ -1,0 +1,36 @@
+sudo: required
+
+services:
+  - docker
+
+env:
+  global:
+    - REGISTRY_USER=kalemena
+    - secure: "OCiOvJAnwyChviwXwhz91dOHUyfsGs/50Ar74zYi3mfHpp/F3cFhi/uPxhWqXHFQZ3EcWHDiaKpd9A8r6bMZpbojIGZrOnnRt5BsxFszmVxLeWPmqzhFFJh/DKH/RMMb5nI1iBNKbaJEXc2I0GYZe9pkkB+4T2LCKyp5Do+ZJftoAA+5l9oH4Scla+u1V5/M18ky8ao4aVitYOfcJRAT6GYSq8re9PBnyyJLpTiUagKeGNmgHYrnNerTwvoYhIoRoJaIT2d16wRA4mWujbDsONk4lBwM4oe77tBxntxipkOTEsz8jWOrAy7t9+nxGO5Ygs8bOTISHBPCauOYFQ5xjtU9prLVNduAnA8D9ZRmPLKrPEmNDKcAU4SXGRojSgoapbvyreONzAmDmZKPSR5TYSw6BhRfnJNGf8HqzHy8WaqR35d71CHutbkbMtPU/Tmb0qnn7VWZ4rc7E7nMjTjXNPTLBeWTuNt3mXbFL8fMG4ziTgI9WFmCSwTAfxHHIaEejGWjwQy2zPFw9jO7nWNp8DDN2xTowVpAEFwppnC5CbdKnGxqn12r3ZLqla6gE5U6m5SZAZLAki7XpI3oPuTqBrxDDk7Znd7zUmXOsfDioeW3Pj5WbyxPNX5pL8TSTz8YMWz65am1r14rZ7Xe+S+n1hgW0BajuXuQix0sJkdPyVY="
+  matrix:
+    - IMAGE="kalemena/octave" VERSION="latest" REPO="kalemena/docker-octave"
+
+before_script:
+  - docker pull ubuntu:18.04
+  - docker pull ${IMAGE}:${VERSION} || true
+
+script:
+  - |
+    docker build --pull --cache-from ${IMAGE}:${VERSION} \
+      -t ${IMAGE}:${VERSION} \
+      -f Dockerfile \
+      --build-arg BUILD_DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"` \
+      --build-arg VCS_REF=`git rev-parse --short HEAD` \
+      --build-arg VERSION=${VERSION} .
+  - docker ps -a
+  - docker tag ${IMAGE}:${VERSION} ${IMAGE}:latest
+  - docker images
+
+before_deploy:
+  - docker login -u "$REGISTRY_USER" -p "$REGISTRY_PASS"
+
+deploy:
+  provider: script
+  script: docker push ${IMAGE}:${VERSION}; docker push ${IMAGE}:latest
+  on:
+    branch: master

@@ -1,0 +1,43 @@
+# docker-octave
+
+ifdef::env-github[]
+image:https://travis-ci.org/kalemena/docker-octave.svg[Travis build status, link=https://travis-ci.org/kalemena/docker-octave]
+image:https://images.microbadger.com/badges/version/kalemena/octave.svg[Docker Version, link=https://microbadger.com/images/kalemena/octave]
+image:https://images.microbadger.com/badges/image/kalemena/octave.svg[Docker Hub, link=https://hub.docker.com/r/kalemena/octave/tags]
+endif::[]
+
+Octave in docker with UI.
+
+# How-To
+
+## Build
+
+This will create kalemena/octave:latest image
+
+[source,bash]
+----
+$ make build
+----
+
+## Run
+
+This will start the Octave UI, with redirecting display to current user display.
+
+[source,bash]
+----
+$ make start
+----
+
+## UI example
+
+In Octave UI, you can try plot to check UI is fully working:
+
+[source,bash]
+----
+>> x = -10:0.1:10;
+>> plot (x, sin (x));
+----
+
+
+image::octave-ui.png[Octave UI Plot]
+
