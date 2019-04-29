@@ -1,0 +1,12 @@
+version: '3.3'
+services:
+  octave:
+    image: kalemena/octave:${VERSION}
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - $HOME:$HOME
+    user: ${CURRENT_UID}
+    environment:
+      - DISPLAY=unix$DISPLAY
+      - HOME=$HOME
+      - USER=$USER
