@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 
 MAINTAINER Kalemena
 
@@ -15,6 +15,13 @@ LABEL org.label-schema.build-date=$BUILD_DATE \
       org.label-schema.vendor="Kalemena" \
       org.label-schema.version=$VERSION \
       org.label-schema.schema-version="1.0"
+
+ENV LANG=C.UTF-8
+ENV DEBIAN_FRONTEND noninteractive
+ENV TZ=Europe/Paris
+
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
+    && echo $TZ > /etc/timezone
 
 RUN apt-get update -y; \
     apt-get upgrade -y; \
