@@ -12,17 +12,19 @@ jobs:
     - uses: actions/checkout@v1
     - name: Build Docker Image
       env:
+        IMAGE_FROM: "ubuntu:22.04"
         IMAGE: "kalemena/octave"
         VERSION: "latest"
       run: |
         docker -v
-        docker pull ubuntu:20.04
+        docker pull ${IMAGE_FROM}
         docker pull ${IMAGE}:${VERSION} || true
         docker build --pull --cache-from ${IMAGE}:${VERSION} \
           -t ${IMAGE}:${VERSION} \
           -f Dockerfile \
           --build-arg BUILD_DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"` \
           --build-arg VCS_REF=`git rev-parse --short HEAD` \
+          --build-arg IMAGE_FROM=${IMAGE_FROM} \
           --build-arg VERSION=${VERSION} .
         docker ps -a
         docker tag ${IMAGE}:${VERSION} ${IMAGE}:latest
